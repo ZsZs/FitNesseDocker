@@ -1,0 +1,13 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <groupId>com.processpuzzle.fitnesse</groupId>
+      <artifactId>fitnesse-docker-parent</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <relativePath>../fitnesse-docker-parent</relativePath>
+   </parent>
+   <artifactId>fitnesse-docker-content</artifactId>
+   <packaging>pom</packaging>
+   <name>FitNesseDocker-Content</name>
+   <description>Provides the content for FitNesse server.</description>
+</project>
