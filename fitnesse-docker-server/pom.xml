@@ -1,13 +1,59 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.processpuzzle.fitnesse</groupId>
-    <artifactId>fitnesse-docker-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../fitnesse-docker-parent</relativePath>    
-  </parent>
-  <artifactId>fitnesse-docker-server</artifactId>
-  <packaging>pom</packaging>
-  <name>FitNesseDocker-Server</name>
-  <description>FitNesse server packed into a docker container.</description>
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <groupId>com.processpuzzle.fitnesse</groupId>
+      <artifactId>fitnesse-docker-parent</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <relativePath>../fitnesse-docker-parent</relativePath>
+   </parent>
+   <artifactId>fitnesse-docker-server</artifactId>
+   <packaging>pom</packaging>
+   <name>FitNesseDocker-Server</name>
+   <description>FitNesse server packed into a docker container.</description>
+
+   <properties>
+      <image.from>${server.image.from.name}:${server.image.from.version}</image.from>
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>com.processpuzzle.fitnesse</groupId>
+         <artifactId>fitnesse-docker-content</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <extensions>true</extensions> <!-- enables using 'docker' packaging above -->
+            <configuration>
+               <watchInterval>500</watchInterval>
+               <logDate>default</logDate>
+               <verbose>true</verbose>
+               <autoPull>always</autoPull>
+               <watchPostGoal>org.apache.maven.plugins:maven-help-plugin:help</watchPostGoal>
+               <images>
+                  <image>
+                     <alias>fitnesse-server</alias>
+                     <name>zsuffazs/${project.artifactId}:latest</name>
+                     <build>
+                        <from>${image.from}</from>
+                        <tags>
+                           <tag>${project.version}</tag>
+                        </tags>
+                        <maintainer>zsolt.zsuffa@gmail.com</maintainer>
+                        <volumes>
+                           <from>zsuffazs/fitnesse-docker-content</from>
+                        </volumes>
+                        <workdir>${container.volume}</workdir>
+                     </build>
+                  </image>
+               </images>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
 </project>

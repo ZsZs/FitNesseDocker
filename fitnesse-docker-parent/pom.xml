@@ -13,11 +13,24 @@
    <properties>
       <java.version>1.8</java.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <docker.maven.plugin.version>0.4.11</docker.maven.plugin.version>
-      <fitnesse.launcher.version>1.6.3-RELEASE</fitnesse.launcher.version>
+      <docker.maven.plugin.version>0.17.2</docker.maven.plugin.version>
+      <fitnesse.launcher.version>1.6.4-RELEASE</fitnesse.launcher.version>
+      <container.volume>/fitnesse</container.volume>
+      <content.image.from.name>busybox</content.image.from.name>
+      <content.image.from.version>latest</content.image.from.version>
+      <server.image.from.name>maven</server.image.from.name>
+      <server.image.from.version>latest</server.image.from.version>
+      <verbose>true</verbose>
    </properties>
 
    <build>
+      <plugins>
+         <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+         </plugin>
+      </plugins>
+
       <pluginManagement>
          <plugins>
             <plugin>
@@ -27,71 +40,27 @@
             </plugin>
 
             <plugin>
-               <groupId>com.spotify</groupId>
+               <groupId>io.fabric8</groupId>
                <artifactId>docker-maven-plugin</artifactId>
                <version>${docker.maven.plugin.version}</version>
+               <extensions>true</extensions> <!-- enables using 'docker' packaging above -->
                <executions>
                   <execution>
-                     <id>build-image</id>
-                     <phase>package</phase>
+                     <id>start</id>
+                     <phase>pre-integration-test</phase>
                      <goals>
                         <goal>build</goal>
+                        <goal>start</goal>
                      </goals>
                   </execution>
                   <execution>
-                     <id>tag-image</id>
-                     <phase>package</phase>
+                     <id>stop</id>
+                     <phase>post-integration-test</phase>
                      <goals>
-                        <goal>tag</goal>
+                        <goal>stop</goal>
                      </goals>
-                     <configuration>
-                        <image>zsuffazs/${project.artifactId}:${project.version}</image>
-                        <newName>zsuffazs/${project.artifactId}:${project.version}</newName>
-                     </configuration>
-                  </execution>
-                  <execution>
-                     <id>push-image-version</id>
-                     <phase>deploy</phase>
-                     <goals>
-                        <goal>push</goal>
-                     </goals>
-                     <configuration>
-                        <imageName>zsuffazs/${project.artifactId}:${project.version}</imageName>
-                        <serverId>docker-hub</serverId>
-                        <registryUrl>https://index.docker.io/v1/</registryUrl>
-                     </configuration>
-                  </execution>
-                  <execution>
-                     <id>push-image-latest</id>
-                     <phase>deploy</phase>
-                     <goals>
-                        <goal>push</goal>
-                     </goals>
-                     <configuration>
-                        <imageName>zsuffazs/${project.artifactId}:latest</imageName>
-                        <serverId>docker-hub</serverId>
-                        <registryUrl>https://index.docker.io/v1/</registryUrl>
-                     </configuration>
                   </execution>
                </executions>
-               <configuration>
-                  <imageName>zsuffazs/${project.artifactId}</imageName>
-                  <dockerDirectory>${basedir}/docker</dockerDirectory>
-                  <serverId>docker-hub</serverId>
-                  <registryUrl>https://index.docker.io/v1/</registryUrl>
-                  <resources>
-                     <resource>
-                        <targetPath>/</targetPath>
-                        <directory>${project.build.directory}</directory>
-                        <include>${project.build.finalName}.jar</include>
-                     </resource>
-                  </resources>
-                  <forceTags>true</forceTags>
-                  <imageTags>
-                     <imageTag>${project.version}</imageTag>
-                     <imageTag>latest</imageTag>
-                  </imageTags>
-               </configuration>
             </plugin>
          </plugins>
       </pluginManagement>
@@ -119,17 +88,78 @@
       </repository>
    </distributionManagement>
 
-   <repositories>
-      <repository>
-         <id>spring-releases</id>
-         <url>https://repo.spring.io/libs-release</url>
-      </repository>
-   </repositories>
+   <profiles>
+      <profile>
+         <id>release-sign-artifacts</id>
+         <activation>
+            <property>
+               <name>performRelease</name>
+               <value>true</value>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-source-plugin</artifactId>
+                  <version>2.2.1</version>
+                  <executions>
+                     <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                           <goal>jar-no-fork</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
 
-   <pluginRepositories>
-      <pluginRepository>
-         <id>spring-releases</id>
-         <url>https://repo.spring.io/libs-release</url>
-      </pluginRepository>
-   </pluginRepositories>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-javadoc-plugin</artifactId>
+                  <version>2.9.1</version>
+                  <executions>
+                     <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                           <goal>jar</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <version>1.6</version>
+                  <configuration>
+                     <mavenExecutorId>forked-path</mavenExecutorId>
+                  </configuration>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+
+               <plugin>
+                  <groupId>org.sonatype.plugins</groupId>
+                  <artifactId>nexus-staging-maven-plugin</artifactId>
+                  <version>1.6.6</version>
+                  <extensions>true</extensions>
+                  <configuration>
+                     <serverId>sonatype-nexus-staging</serverId>
+                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                  </configuration>
+               </plugin>
+
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+   
 </project>

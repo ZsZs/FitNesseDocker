@@ -10,4 +10,57 @@
    <packaging>pom</packaging>
    <name>FitNesseDocker-Content</name>
    <description>Provides the content for FitNesse server.</description>
+
+   <properties>
+      <image.from>${content.image.from.name}:${content.image.from.version}</image.from>
+   </properties>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <extensions>true</extensions> <!-- enables using 'docker' packaging above -->
+            <configuration>
+               <watchInterval>500</watchInterval>
+               <logDate>default</logDate>
+               <verbose>true</verbose>
+               <autoPull>always</autoPull>
+               <watchPostGoal>org.apache.maven.plugins:maven-help-plugin:help</watchPostGoal>
+               <images>
+                  <image>
+                     <alias>fitnesse-content</alias>
+                     <name>zsuffazs/${project.artifactId}:latest</name>
+                     <build>
+                        <from>${image.from}</from>
+                        <tags>
+                           <tag>${project.version}</tag>
+                        </tags>
+                        <maintainer>zsolt.zsuffa@gmail.com</maintainer>
+                        <volumes>
+                           <volume>${container.volume}</volume>
+                        </volumes>
+                        <workdir>${container.volume}</workdir>
+                        <assembly>
+                           <basedir>${container.volume}</basedir>
+                           <mode>dir</mode>
+                           <inline xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+                              xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+                              <id>fitnesse-content</id>
+                              <fileSets>
+                                 <fileSet>
+                                    <directory>${project.basedir}/../../FitNesseConnect</directory>
+                                    <outputDirectory>.</outputDirectory>
+                                 </fileSet>
+                              </fileSets>
+                           </inline>
+                        </assembly>
+                        <cmd>echo</cmd>
+                     </build>
+                  </image>
+               </images>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
 </project>
