@@ -49,7 +49,17 @@
                            <from>zsuffazs/fitnesse-docker-content</from>
                         </volumes>
                         <workdir>${container.volume}</workdir>
+                        <cmd>mvn clean install -P wiki</cmd>
                      </build>
+                     <run>
+                        <volumes>
+                           <from>zsuffazs/fitnesse-docker-content</from>
+                        </volumes>
+                        <ports>
+                           <port>9123:9123</port>
+                        </ports>
+                        <cmd>mvn -f fitnesse-connect-connect/pom.xml clean install -P wiki</cmd>
+                     </run>
                   </image>
                </images>
             </configuration>

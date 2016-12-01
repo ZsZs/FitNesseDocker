@@ -13,7 +13,7 @@
    <properties>
       <java.version>1.8</java.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <docker.maven.plugin.version>0.17.2</docker.maven.plugin.version>
+      <docker.maven.plugin.version>0.18.1</docker.maven.plugin.version>
       <fitnesse.launcher.version>1.6.4-RELEASE</fitnesse.launcher.version>
       <container.volume>/fitnesse</container.volume>
       <content.image.from.name>busybox</content.image.from.name>

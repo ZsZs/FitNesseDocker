@@ -1,1 +1,1 @@
-docker run --detach --name fitnesse-docker-content zsuffazs/fitnesse-docker-content 
+docker run --name fitnesse-docker-content -v /fitnesse zsuffazs/fitnesse-docker-content ls

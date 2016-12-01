@@ -55,7 +55,7 @@
                               </fileSets>
                            </inline>
                         </assembly>
-                        <cmd>echo</cmd>
+                        <cmd><shell>ls</shell></cmd>
                      </build>
                   </image>
                </images>
