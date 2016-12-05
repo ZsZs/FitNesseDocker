@@ -1,0 +1,30 @@
+version: '2'
+
+networks:
+  prodnetwork:
+    driver: bridge
+
+services:
+  content:
+    image: zsuffazs/fitnesse-docker-content
+    
+  server:
+    image: zsuffazs/fitnesse-docker-server
+    ports:
+    - 9123:9123
+    networks:
+    - prodnetwork
+    volumes_from:
+    - content
+
+  nginx:
+    image: nginx:latest
+    ports:
+    - "80:80"
+    volumes:
+    - ./proxy/conf:/etc/nginx/conf.d
+    - ./proxy/html:/usr/share/nginx/html
+    depends_on:
+    - server
+    restart: always
+        

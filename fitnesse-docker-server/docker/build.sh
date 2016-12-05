@@ -1,1 +1,2 @@
+docker build -t zsuffazs/fitnesse-docker-server .
 docker run -p 9123:9123 --name fitnesse-docker-server --volumes-from fitnesse-docker-content zsuffazs/fitnesse-docker-server mvn -f fitnesse-connect-connect/pom.xml clean verify -P wiki

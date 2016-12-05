@@ -49,11 +49,30 @@
                            <from>zsuffazs/fitnesse-docker-content</from>
                         </volumes>
                         <workdir>${container.volume}</workdir>
-                        <cmd>mvn clean install -P wiki</cmd>
+                        <assembly>
+                           <basedir>${container.volume}</basedir>
+                           <mode>dir</mode>
+                           <inline xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+                              xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+                              <id>sample-pom</id>
+                              <fileSets>
+                                 <fileSet>
+                                    <includes>
+                                       <include>docker/pom.xml</include>
+                                    </includes>
+                                    <outputDirectory>.</outputDirectory>
+                                 </fileSet>
+                              </fileSets>
+                           </inline>
+                        </assembly>
+
+                        <cmd>mvn validate</cmd>
                      </build>
                      <run>
                         <volumes>
-                           <from><image>zsuffazs/fitnesse-docker-content</image></from>
+                           <from>
+                              <image>zsuffazs/fitnesse-docker-content</image>
+                           </from>
                         </volumes>
                         <ports>
                            <port>9123:9123</port>
