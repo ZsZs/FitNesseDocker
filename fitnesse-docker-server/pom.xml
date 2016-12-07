@@ -45,6 +45,10 @@
                            <tag>${project.version}</tag>
                         </tags>
                         <maintainer>zsolt.zsuffa@gmail.com</maintainer>
+                        <env>
+                           <JAVA_HOME>/usr/lib/jvm/java-8-openjdk-amd64/jre</JAVA_HOME>
+                           <MAVEN_HOME>/usr/share/maven</MAVEN_HOME>
+                        </env>
                         <volumes>
                            <from>zsuffazs/fitnesse-docker-content</from>
                         </volumes>
@@ -57,16 +61,19 @@
                               <id>sample-pom</id>
                               <fileSets>
                                  <fileSet>
+                                    <directory>${project.basedir}/docker</directory>
                                     <includes>
-                                       <include>docker/pom.xml</include>
+                                       <include>pom.xml</include>
                                     </includes>
                                     <outputDirectory>.</outputDirectory>
                                  </fileSet>
                               </fileSets>
                            </inline>
                         </assembly>
-
-                        <cmd>mvn validate</cmd>
+                        <runCmds>
+                           <runCmd>mvn validate</runCmd>
+                        </runCmds>
+                        <cmd>mvn clean verify -P wiki</cmd>
                      </build>
                      <run>
                         <volumes>

@@ -1,5 +1,6 @@
 # General
 .git
+.gitignore
 .idea/*
 .DS_Store
 
@@ -26,6 +27,8 @@ fitnesse-docker-content
 fitnesse-docker-parent
 fitnesse-docker-server
 src/
-proxy/*
+proxy
 pom.xml
 docker-compose.yml
+LICENSE
+README.md

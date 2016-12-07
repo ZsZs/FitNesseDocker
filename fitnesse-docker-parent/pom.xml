@@ -16,7 +16,7 @@
       <docker.maven.plugin.version>0.18.1</docker.maven.plugin.version>
       <fitnesse.launcher.version>1.6.4-RELEASE</fitnesse.launcher.version>
       <container.volume>/fitnesse</container.volume>
-      <content.image.from.name>stilliard/pure-ftpd</content.image.from.name>
+      <content.image.from.name>busybox</content.image.from.name>
       <content.image.from.version>latest</content.image.from.version>
       <server.image.from.name>maven</server.image.from.name>
       <server.image.from.version>latest</server.image.from.version>

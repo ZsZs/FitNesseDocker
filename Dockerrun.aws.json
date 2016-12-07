@@ -1,37 +1,16 @@
 {
   "AWSEBDockerrunVersion": 2,
-  "volumes": [
-    {
-      "name": "fitnesse-static",
-      "host": {
-        "sourcePath": "/var/app/current/fitnesse"
-      }
-    }
-  ],
-	
   "containerDefinitions": [
   {
 	"name": "fitnesse-content",
-	"image": "zsuffazs/fitnesse-docker-content",
-	"essential": true,
-	"cpu": 100,
-	"memory": 128,
-	"mountPoints": {
-		"sourceVolume": "fitnesse-static",
-		"containerPath": "/fitnesse",
-		"readOnly": false
-	},
-    "portMappings": [
-      {
-        "hostPort": 21,
-        "containerPort": 21
-      }
-    ]
+	"image": "zsuffazs/fitnesse-docker-content:latest",
+	"essential": false,
+	"memory": 128
   },
   
   {
     "name": "fitnesse-app",
-    "image": "zsuffazs/fitnesse-docker-server",
+    "image": "zsuffazs/fitnesse-docker-server:latest",
     "essential": true,
     "memory": 256,
     "volumesFrom": [
