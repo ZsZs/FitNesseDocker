@@ -3,7 +3,7 @@
    <parent>
       <groupId>com.processpuzzle.fitnesse</groupId>
       <artifactId>fitnesse-docker-parent</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.0.4-SNAPSHOT</version>
       <relativePath>../fitnesse-docker-parent</relativePath>
    </parent>
    <artifactId>fitnesse-docker-server</artifactId>
@@ -50,11 +50,12 @@
                            <MAVEN_HOME>/usr/share/maven</MAVEN_HOME>
                         </env>
                         <volumes>
-                           <from>zsuffazs/fitnesse-docker-content</from>
+                           <volume>${container.volume}</volume>
+                           <volume>${repository.volume}</volume>
                         </volumes>
                         <workdir>${container.volume}</workdir>
                         <assembly>
-                           <basedir>${container.volume}</basedir>
+                           <basedir>/</basedir>
                            <mode>dir</mode>
                            <inline xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
                               xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
@@ -63,20 +64,33 @@
                                  <fileSet>
                                     <directory>${project.basedir}/docker</directory>
                                     <includes>
+                                       <include>settings.xml</include>
+                                    </includes>
+                                    <outputDirectory>/usr/share/maven/conf</outputDirectory>
+                                 </fileSet>
+                                 <fileSet>
+                                    <directory>${project.basedir}/docker</directory>
+                                    <includes>
                                        <include>pom.xml</include>
                                     </includes>
-                                    <outputDirectory>.</outputDirectory>
+                                    <outputDirectory>${container.volume}</outputDirectory>
                                  </fileSet>
                               </fileSets>
                            </inline>
                         </assembly>
                         <runCmds>
-                           <runCmd>mvn validate</runCmd>
+                           <runCmd>mvn clean install -Dmaven.test.skip=true</runCmd>
                         </runCmds>
-                        <cmd>mvn clean verify -P wiki</cmd>
+                        <ports>
+                           <port>9123</port>
+                        </ports>
+                        <cmd>mvn -f fitnesse-connect-connect/pom.xml clean install -P wiki -Dmaven.test.skip=true</cmd>
                      </build>
                      <run>
                         <volumes>
+                           <bind>
+                              <volume>${repository.volume}</volume>
+                           </bind>
                            <from>
                               <image>zsuffazs/fitnesse-docker-content</image>
                            </from>
@@ -84,7 +98,7 @@
                         <ports>
                            <port>9123:9123</port>
                         </ports>
-                        <cmd>mvn -f fitnesse-connect-connect/pom.xml clean install -P wiki</cmd>
+                        <cmd>mvn -f fitnesse-connect-connect/pom.xml clean install -P wiki -Dmaven.test.skip=true</cmd>
                      </run>
                   </image>
                </images>

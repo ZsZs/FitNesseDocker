@@ -3,7 +3,7 @@
    <parent>
       <groupId>com.processpuzzle.fitnesse</groupId>
       <artifactId>fitnesse-docker</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.0.4-SNAPSHOT</version>
    </parent>
    <artifactId>fitnesse-docker-parent</artifactId>
    <packaging>pom</packaging>
@@ -16,6 +16,7 @@
       <docker.maven.plugin.version>0.18.1</docker.maven.plugin.version>
       <fitnesse.launcher.version>1.6.4-RELEASE</fitnesse.launcher.version>
       <container.volume>/fitnesse</container.volume>
+      <repository.volume>/maven/repository</repository.volume>
       <content.image.from.name>busybox</content.image.from.name>
       <content.image.from.version>latest</content.image.from.version>
       <server.image.from.name>maven</server.image.from.name>

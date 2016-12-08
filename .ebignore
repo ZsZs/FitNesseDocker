@@ -27,7 +27,6 @@ fitnesse-docker-content
 fitnesse-docker-parent
 fitnesse-docker-server
 src/
-proxy
 pom.xml
 docker-compose.yml
 LICENSE
