@@ -3,7 +3,7 @@
    <parent>
       <groupId>com.processpuzzle.fitnesse</groupId>
       <artifactId>fitnesse-docker</artifactId>
-      <version>0.0.4-SNAPSHOT</version>
+      <version>0.0.5-SNAPSHOT</version>
    </parent>
    <artifactId>fitnesse-docker-parent</artifactId>
    <packaging>pom</packaging>
@@ -45,14 +45,6 @@
                      <goals>
                         <goal>build</goal>
                         <goal>push</goal>
-                        <goal>start</goal>
-                     </goals>
-                  </execution>
-                  <execution>
-                     <id>stop</id>
-                     <phase>post-integration-test</phase>
-                     <goals>
-                        <goal>stop</goal>
                      </goals>
                   </execution>
                </executions>
@@ -84,6 +76,38 @@
    </distributionManagement>
 
    <profiles>
+      <profile>
+         <id>docker-run</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>io.fabric8</groupId>
+                  <artifactId>docker-maven-plugin</artifactId>
+                  <version>${docker.maven.plugin.version}</version>
+                  <extensions>true</extensions> <!-- enables using 'docker' packaging above -->
+                  <executions>
+                     <execution>
+                        <id>start</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                           <goal>build</goal>
+                           <goal>push</goal>
+                           <goal>start</goal>
+                        </goals>
+                     </execution>
+                     <execution>
+                        <id>stop</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                           <goal>stop</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+
       <profile>
          <id>release-sign-artifacts</id>
          <activation>
@@ -156,5 +180,5 @@
          </build>
       </profile>
    </profiles>
-   
+
 </project>

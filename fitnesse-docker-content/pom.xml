@@ -3,7 +3,7 @@
    <parent>
       <groupId>com.processpuzzle.fitnesse</groupId>
       <artifactId>fitnesse-docker-parent</artifactId>
-      <version>0.0.4-SNAPSHOT</version>
+      <version>0.0.5-SNAPSHOT</version>
       <relativePath>../fitnesse-docker-parent</relativePath>
    </parent>
    <artifactId>fitnesse-docker-content</artifactId>
